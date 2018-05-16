@@ -37,15 +37,25 @@ DATE_SELECT.Model = Backbone.Model.extend({
   },
   
   initialize: function(){
-    _.bindAll(this, "setLastDay");
+    _.bindAll(this, "setLastDay", "changeLastDay");
     this.setLastDay();
-    this.on("change", this.setLastDay);
+    this.on("change:year", this.setLastDay);
+    this.on("change:month", this.setLastDay);
+    this.on("change:last_day", this.changeLastDay);
   },
   
   setLastDay: function(){
     var data = this.toJSON(),
         last_day = getLastDay(data.year, data.month);
     this.set("last_day", last_day);
+  },
+  
+  changeLastDay: function(){
+    var day = this.get("day"),
+        last_day = this.get("last_day");
+    if(day > last_day){
+      this.set("day", last_day)
+    }
   }
   
 });
@@ -87,6 +97,7 @@ DATE_SELECT.View = Backbone.View.extend({
   },
   
   setResult: function(){
+    console.log("setResult");
     var year = this.model.get("year"),
         month = this.model.get("month"),
         day = this.model.get("day"),
